@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Звук по клику</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: black; /* Черный экран */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        #mute-button {
+            display: none; /* Скрываем кнопку по умолчанию */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px;
+        }
+        #loading-gif {
+            display: block; /* Показываем гифку загрузки по умолчанию */
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <img id="loading-gif" src="loading.gif" alt="Загрузка">
+    <button id="mute-button">Заглушить</button>
+
+    <script>
+        // Определяем текущий путь (например, /1 или /2)
+        const path = window.location.pathname; // Получаем путь, например, "/1"
+
+        // Выбираем звук в зависимости от пути
+        let soundFile;
+        if (path === '/1') {
+            soundFile = 'sound1.mp3'; // Звук для /1
+        } else if (path === '/2') {
+            soundFile = 'sound2.mp3'; // Звук для /2
+        } else {
+            soundFile = 'default.mp3'; // Звук по умолчанию (если путь не /1 или /2)
+        }
+
+        // Создаем аудио объект
+        const clickSound = new Audio(soundFile);
+        clickSound.autoplay = true; // Зацикливаем звук
+
+        // Функция для входа в полноэкранный режим
+        function enterFullScreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, Edge
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        // Обработчик изменения полноэкранного режима
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                // Если пользователь вышел из полноэкранного режима, пытаемся вернуть его обратно
+                enterFullScreen();
+            }
+        });
+
+        // Обработчик клика по странице
+        document.addEventListener('click', function() {
+            // Входим в полноэкранный режим
+            enterFullScreen();
+
+            // Проигрываем звук
+            clickSound.play();
+
+            // Скрываем гифку загрузки
+            document.getElementById('loading-gif').style.display = 'none';
+
+            // Показываем кнопку "Заглушить"
+            document.getElementById('mute-button').style.display = 'block';
+        });
+
+        // Обработчик клика по кнопке "Заглушить"
+        document.getElementById('mute-button').addEventListener('click', function() {
+            // Пустая функция (ничего не делает)
+            console.log('Кнопка "Заглушить" нажата, но ничего не делает.');
+        });
+    </script>
+</body>
+</html>
